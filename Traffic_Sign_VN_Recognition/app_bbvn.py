@@ -1,3 +1,4 @@
+# Khai báo thư viện
 import os
 import numpy as np
 from flask import Flask, request, render_template
@@ -6,23 +7,33 @@ import cv2
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 
+# Khởi tạo ứng dụng Flask
 app = Flask(__name__)
 
-MODEL_PATH = "traffic_sign_model_final.h5"
+# Đường dẫn đến mô hình đã được huấn luyện
+MODEL_PATH = "traffic_sign_model_cnn.h5"
+
+# Tải mô hình đã huấn luyện
 model = load_model(MODEL_PATH)
 
+# Hàm chuyển đổi ảnh sang ảnh xám
 def grayscale(img):
-    return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    return img
 
+# Hàm cân bằng histogram của ảnh xám
 def equalize(img):
-    return cv2.equalizeHist(img)
+    img = cv2.equalizeHist(img)
+    return img
 
+# Hàm tiền xử lý ảnh đầu vào
 def preprocessing(img):
     img = grayscale(img)
     img = equalize(img)
-    img = img / 255.0
+    img = img / 255.0  # Chuẩn hóa giá trị ảnh
     return img
 
+# Hàm trả về tên của biển báo giao thông dựa vào chỉ số lớp
 def getClassName(classNo):
     if classNo == 0:
         return 'Duong Cam'
@@ -39,7 +50,7 @@ def getClassName(classNo):
     elif classNo == 6:
         return 'Cam xe tai'
     elif classNo == 7:
-        return 'Cam o to khach va o to tai'
+        return 'Cam o to khach va o to'
     elif classNo == 8:
         return 'Cam xe dap'
     elif classNo == 9:
@@ -83,7 +94,7 @@ def getClassName(classNo):
     elif classNo == 28:
         return 'Nguoi di bo cat ngang'
     elif classNo == 29:
-        return 'Nguy hiem tre em qua duong'
+        return 'Tre em'
     elif classNo == 30:
         return 'Cong truong'
     elif classNo == 31:
@@ -104,36 +115,39 @@ def getClassName(classNo):
         return 'Cac xe chi duoc re trai hoac re phai'
     elif classNo == 39:
         return 'Huong di vong chuong ngai vat sang trai'
-    else:
-        return 'Unknown class number'
+    return class_names[classNo]
 
+# Hàm dự đoán loại biển báo từ ảnh đầu vào
 def model_predict(img_path, model):
     print(img_path)
-    img = image.load_img(img_path, target_size=(32, 32))
-    img = np.asarray(img)
-    img = preprocessing(img)
-    img = img.reshape(1, 32, 32, 1)  # Reshape for model input
-    predictions = model.predict(img)
-    classIndex = np.argmax(predictions, axis=1)[0]
-    probabilityValue = np.amax(predictions)
-    preds = getClassName(classIndex)
+    img = image.load_img(img_path, target_size=(32, 32))  # Tải ảnh và thay đổi kích thước
+    img = np.asarray(img)  # Chuyển đổi ảnh thành mảng numpy
+    img = preprocessing(img)  # Tiền xử lý ảnh
+    img = img.reshape(1, 32, 32, 1)  # Định dạng lại cho phù hợp với mô hình
+    predictions = model.predict(img)  # Dự đoán loại biển báo
+    classIndex = np.argmax(predictions, axis=1)[0]  # Lấy chỉ số lớp có xác suất cao nhất
+    probabilityValue = np.amax(predictions)  # Lấy xác suất cao nhất
+    preds = getClassName(classIndex)  # Lấy tên lớp từ chỉ số lớp
     return preds
 
+# Định nghĩa route chính cho trang web
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html')
+    return render_template('index.html')  # Trả về trang index.html
 
+# Định nghĩa route để xử lý dự đoán khi người dùng tải ảnh lên
 @app.route('/predict', methods=['GET', 'POST'])
 def upload():
     if request.method == 'POST':
-        f = request.files['file']
-        basepath = os.path.dirname(__file__)
-        file_path = os.path.join(basepath, 'uploads', secure_filename(f.filename))
-        f.save(file_path)
-        preds = model_predict(file_path, model)
-        result = preds
-        return result
+        f = request.files['file']  # Lấy tệp tin người dùng tải lên
+        basepath = os.path.dirname(__file__)  # Đường dẫn đến thư mục hiện tại
+        file_path = os.path.join(basepath, 'uploads', secure_filename(f.filename))  # Đường dẫn lưu tệp tin tải lên
+        f.save(file_path)  # Lưu tệp tin
+        preds = model_predict(file_path, model)  # Dự đoán loại biển báo
+        result = preds  # Kết quả dự đoán
+        return result  # Trả về kết quả dự đoán
     return None
 
+# Chạy ứng dụng Flask
 if __name__ == "__main__":
     app.run(debug=True)
