@@ -1,4 +1,4 @@
-# Khai báo thư viện
+# Khai báo thư viện hh
 import numpy as np
 import matplotlib.pyplot as plt
 from tf_keras.models import Sequential
