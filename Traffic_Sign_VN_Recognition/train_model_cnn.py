@@ -16,7 +16,7 @@ from tf_keras.preprocessing.image import ImageDataGenerator
 path = "E:/AI/BTL/Nhom_01/DataBienBaoVNFinal"
 labelFile = 'E:/AI/BTL/Nhom_01/Traffic_Sign_VN_Recognition/label_final.csv'
 
-# Cài đặt batch_size và epoch
+# Cài đặt batch_size và epoch cho mô hình
 batch_size_val = 32
 epochs_val = 30
 imageDimesions = (32, 32, 3)
