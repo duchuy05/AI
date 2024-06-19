@@ -156,6 +156,6 @@ while True:
     if k == ord('q'):
         break
 
-#Đóng cửa sổ
+#Đóng chương trình
 cv2.destroyAllWindows()
 cap.release()
