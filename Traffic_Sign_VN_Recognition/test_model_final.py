@@ -23,7 +23,7 @@ cap.set(10, brightness)
 model = load_model("traffic_sign_model_cnn.h5")  ## rb = READ BYTE
 
 #TIỀN XỬ LÍ HÌNH ẢNH
-#Chỉnh ảnh thành xám
+#Chỉnh ảnh thành thang độ xám
 def grayscale(img):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     return img
