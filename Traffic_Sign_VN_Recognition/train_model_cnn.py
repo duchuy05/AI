@@ -34,7 +34,7 @@ print("Total Classes Detected:", len(myList))
 noOfClasses = len(myList)
 print("Importing Classes.....")
 
-# Lấy dữ liệu ảnh từ các thư mục con của dataset
+# Lấy dữ liệu ảnh từ các thư mục con của dataset DataBienBaoVNFinal
 for x in range(0, len(myList)):
     myPicList = os.listdir(path + "/" + str(count))
     for y in myPicList:
