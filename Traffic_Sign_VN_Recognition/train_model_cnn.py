@@ -1,4 +1,4 @@
-# Khai báo thư viện hh
+# Khai báo thư viện tensorflow, keras, scikit-learn
 import numpy as np
 import matplotlib.pyplot as plt
 from tf_keras.models import Sequential
